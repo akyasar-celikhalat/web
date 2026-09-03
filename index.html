@@ -67,7 +67,7 @@
             padding-right: 5px;
         }
         .form-group input {
-            width: 100px;
+            width: 110px;
             padding: 4px 6px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -103,11 +103,11 @@
             
             <div class="form-group">
                 <label>Saat Ücreti (TL):</label>
-                <input type="number" id="saatUcreti" step="0.0001" value="188.9100" oninput="saatUcretiDegisti()">
+                <input type="number" id="saatUcreti" step="0.0001" value="295.78" oninput="hesapla()">
             </div>
             <div class="form-group">
                 <label>Normal Çalışma (Saat):</label>
-                <input type="number" id="normalSaat" value="225" step="0.5" oninput="hesapla()">
+                <input type="number" id="normalSaat" value="225.0" step="0.5" oninput="hesapla()">
             </div>
             <div class="form-group">
                 <label>Normal Çalışma Tutar:</label>
@@ -131,27 +131,26 @@
             </div>
             <div class="form-group">
                 <label>Çocuk Yardımı (TL):</label>
-                <input type="number" id="cocukYardimi" step="0.01" value="355.22" oninput="hesapla()">
+                <input type="number" id="cocukYardimi" step="0.01" value="0.00" oninput="hesapla()">
             </div>
             <div class="form-group">
                 <label>Yakacak Yardımı (TL):</label>
-                <input type="number" id="yakacak" step="0.01" value="3476.45" oninput="hesapla()">
+                <input type="number" id="yakacak" step="0.01" value="3034.08" oninput="hesapla()">
             </div>
             <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
             <div class="form-group" style="background-color: #e8f4f8; padding: 4px; border-radius: 4px;">
                 <label><strong>Önceki Küm. V. Matrahı:</strong></label>
-                <input type="number" id="oncekiKumulatif" step="0.01" value="0.00" oninput="hesapla()">
+                <input type="number" id="oncekiKumulatif" step="0.01" value="0" oninput="hesapla()">
             </div>
             <div class="form-group">
                 <label>GV İstisnası (TL):</label>
-                <input type="number" id="gvIstisnasi" step="0.01" value="4211.33" oninput="hesapla()">
+                <input type="number" id="gvIstisnasi" step="0.01" value="4537.75" oninput="hesapla()">
             </div>
             <div class="form-group">
                 <label>DV İstisnası (TL):</label>
                 <input type="number" id="dvIstisnasi" step="0.01" value="250.70" oninput="hesapla()">
             </div>
             <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
-            <!-- OTOMATİK HESAPLANAN İKRAMİYE ALANI -->
             <div class="form-group">
                 <label>İkramiye Tutar:</label>
                 <input type="text" id="ikramiye" class="readonly" readonly>
@@ -184,7 +183,7 @@
                 <input type="text" id="issizlikPrimi" class="readonly" readonly>
             </div>
             <div class="form-group">
-                <label>Sendika Aidatı (7.5 x Saat Üc.):</label>
+                <label>Sendika Aidatı :</label>
                 <input type="text" id="sendikaAidati" class="readonly" readonly>
             </div>
             <div class="form-group">
@@ -210,12 +209,8 @@
             <div class="section-title">ÖZEL KESİNTİLER & SONUÇ</div>
             
             <div class="form-group">
-                <label>BES / Özel Sigorta (TL):</label>
-                <input type="number" id="besKesintisi" step="0.01" value="0.00" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>Diğer Özel Kesintiler (TL):</label>
-                <input type="number" id="digerKesintiler" step="0.01" value="0.00" oninput="hesapla()">
+                <label>Avans :</label>
+                <input type="number" id="digerKesintiler" step="0.01" value="0" oninput="hesapla()">
             </div>
             <div class="form-group" style="font-weight: bold;">
                 <label>Özel Kesintiler Toplamı:</label>
@@ -236,13 +231,12 @@
 
     <!-- ALT BİLGİ BARI (NET KAZANÇ) -->
     <div class="summary-bar">
-        <span>NET KAZANÇ (ELE GEÇEN):</span>
+        <span>NET ÖDENEN (ELE GEÇEN):</span>
         <span id="netKazanc">0,00 TL</span>
     </div>
 </div>
 
 <script>
-    // Gelir Vergisi Dilimleri Hesaplama
     function gelirVergisiHesapla(matrah, oncekiKumulatif) {
         const dilimler = [
             { limit: 158000, oran: 0.15 },
@@ -281,12 +275,7 @@
         return val.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TL';
     }
 
-    function saatUcretiDegisti() {
-        hesapla();
-    }
-
     function hesapla() {
-        // Girdileri Al
         const saatUcreti = parseFloat(document.getElementById('saatUcreti').value) || 0;
         const normalSaat = parseFloat(document.getElementById('normalSaat').value) || 0;
         const mesai1Saat = parseFloat(document.getElementById('mesai1Saat').value) || 0;
@@ -298,47 +287,43 @@
         const gvIstisnasi = parseFloat(document.getElementById('gvIstisnasi').value) || 0;
         const dvIstisnasi = parseFloat(document.getElementById('dvIstisnasi').value) || 0;
 
-        const besKesintisi = parseFloat(document.getElementById('besKesintisi').value) || 0;
         const digerKesintiler = parseFloat(document.getElementById('digerKesintiler').value) || 0;
 
-        // Normal Çalışma ve Otomatik İkramiye
+        // Tutarlar
         const normalTutar = saatUcreti * normalSaat;
         const otomatikIkramiye = (saatUcreti * 225) / 3;
-
-        // Fazla Mesai Hesaplamaları
         const mesai1Tutar = saatUcreti * mesai1Saat * 2.0;
         const mesai2Tutar = saatUcreti * mesai2Saat * 2.2;
 
-        // 1. Brüt Kazanç Hesaplaması
+        // Brüt Toplam
         const brutToplam = normalTutar + otomatikIkramiye + mesai1Tutar + mesai2Tutar + cocukYardimi + yakacak;
 
-        // 2. SSK Matrahı (Mesailer dahil, Çocuk ve Yakacak muaf)
-        const sskMatrahi = normalTutar + otomatikIkramiye + mesai1Tutar + mesai2Tutar;
+        // SSK Matrahı (Yakacak yardımı dahil)
+        const sskMatrahi = brutToplam - cocukYardimi;
 
-        // 3. Primler ve Kesintiler
+        // Primler ve Kesintiler
         const sigortaPrimi = sskMatrahi * 0.14;
         const issizlikPrimi = sskMatrahi * 0.01;
         const sendikaAidati = saatUcreti * 7.5;
 
-        // 4. Vergi Matrahı
+        // Vergi Matrahı
         const vergiMatrahi = sskMatrahi - sigortaPrimi - issizlikPrimi - sendikaAidati;
         const yeniKumulatif = oncekiKumulatif + vergiMatrahi;
 
-        // 5. Vergiler
+        // Vergiler
         const brutGV = gelirVergisiHesapla(vergiMatrahi, oncekiKumulatif);
         const netGV = Math.max(0, brutGV - gvIstisnasi);
 
-        // Damga Vergisi (Binde 7,59)
         const brutDV = brutToplam * 0.00759;
         const netDV = Math.max(0, brutDV - dvIstisnasi);
 
-        // 6. Toplamlar
+        // Toplamlar
         const yasalKesintiToplam = sigortaPrimi + issizlikPrimi + sendikaAidati + netGV + netDV;
-        const ozelKesintiToplam = besKesintisi + digerKesintiler;
+        const ozelKesintiToplam = digerKesintiler;
         const genelToplamKesinti = yasalKesintiToplam + ozelKesintiToplam;
         const netKazanc = brutToplam - genelToplamKesinti;
 
-        // Arayüze Yazdır
+        // Ekrana Yazdır
         document.getElementById('normalTutar').value = formatTL(normalTutar);
         document.getElementById('ikramiye').value = formatTL(otomatikIkramiye);
         document.getElementById('mesai1Tutar').value = formatTL(mesai1Tutar);
@@ -362,7 +347,6 @@
         document.getElementById('netKazanc').innerText = formatTL(netKazanc);
     }
 
-    // İlk açılışta çalıştır
     window.onload = function() {
         hesapla();
     };

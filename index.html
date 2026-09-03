@@ -106,20 +106,24 @@
                 <input type="number" id="saatUcreti" step="0.0001" value="188.9100" oninput="saatUcretiDegisti()">
             </div>
             <div class="form-group">
-                <label>Normal Çalışma (Saat):</label>
-                <input type="number" id="normalSaat" value="225" oninput="hesapla()">
+                <label>Fazla Mesai 1 (Saat):</label>
+                <input type="number" id="mesai1Saat" value="0" step="0.5" oninput="hesapla()">
             </div>
             <div class="form-group">
-                <label>Normal Çalışma Tutar:</label>
-                <input type="text" id="normalTutar" class="readonly" readonly>
+                <label>Fazla Mesai 1 Tutar:</label>
+                <input type="text" id="mesai1Tutar" class="readonly" readonly>
+            </div>
+            <div class="form-group">
+                <label>Fazla Mesai 2 (Saat):</label>
+                <input type="number" id="mesai2Saat" value="0" step="0.5" oninput="hesapla()">
+            </div>
+            <div class="form-group">
+                <label>Fazla Mesai 2 Tutar:</label>
+                <input type="text" id="mesai2Tutar" class="readonly" readonly>
             </div>
             <div class="form-group">
                 <label>Çocuk Yardımı (TL):</label>
                 <input type="number" id="cocukYardimi" step="0.01" value="355.22" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>İkramiye (TL):</label>
-                <input type="number" id="ikramiye" step="0.01" oninput="hesapla()">
             </div>
             <div class="form-group">
                 <label>Yakacak Yardımı (TL):</label>
@@ -137,6 +141,16 @@
             <div class="form-group">
                 <label>DV İstisnası (TL):</label>
                 <input type="number" id="dvIstisnasi" step="0.01" value="250.70" oninput="hesapla()">
+            </div>
+            <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
+            <!-- DEĞİŞTİRİLEMEZ OTOMATİK HESAPLANAN ALANLAR (EN ALTTA) -->
+            <div class="form-group">
+                <label>Normal Çalışma (225 Saat):</label>
+                <input type="text" id="normalTutar" class="readonly" readonly>
+            </div>
+            <div class="form-group">
+                <label>İkramiye Tutar:</label>
+                <input type="text" id="ikramiye" class="readonly" readonly>
             </div>
         </div>
 
@@ -263,21 +277,16 @@
         return val.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TL';
     }
 
-    // Saat ücreti değiştiğinde ikramiyeyi otomatik güncelle
     function saatUcretiDegisti() {
-        const saatUcreti = parseFloat(document.getElementById('saatUcreti').value) || 0;
-        // İkramiye = Saat Ücreti x 225 / 3
-        const otomatikIkramiye = (saatUcreti * 225) / 3;
-        document.getElementById('ikramiye').value = otomatikIkramiye.toFixed(2);
         hesapla();
     }
 
     function hesapla() {
         // Girdileri Al
         const saatUcreti = parseFloat(document.getElementById('saatUcreti').value) || 0;
-        const normalSaat = parseFloat(document.getElementById('normalSaat').value) || 0;
+        const mesai1Saat = parseFloat(document.getElementById('mesai1Saat').value) || 0;
+        const mesai2Saat = parseFloat(document.getElementById('mesai2Saat').value) || 0;
         const cocukYardimi = parseFloat(document.getElementById('cocukYardimi').value) || 0;
-        const ikramiye = parseFloat(document.getElementById('ikramiye').value) || 0;
         const yakacak = parseFloat(document.getElementById('yakacak').value) || 0;
         
         const oncekiKumulatif = parseFloat(document.getElementById('oncekiKumulatif').value) || 0;
@@ -287,12 +296,20 @@
         const besKesintisi = parseFloat(document.getElementById('besKesintisi').value) || 0;
         const digerKesintiler = parseFloat(document.getElementById('digerKesintiler').value) || 0;
 
-        // 1. Kazanç Hesaplamaları
+        // Otomatik Değiştirilemez Kalemler
+        const normalSaat = 225;
         const normalTutar = saatUcreti * normalSaat;
-        const brutToplam = normalTutar + cocukYardimi + ikramiye + yakacak;
+        const otomatikIkramiye = (saatUcreti * 225) / 3;
 
-        // 2. SSK Matrahı
-        const sskMatrahi = normalTutar + ikramiye;
+        // Fazla Mesai Hesaplamaları
+        const mesai1Tutar = saatUcreti * mesai1Saat * 2.0;
+        const mesai2Tutar = saatUcreti * mesai2Saat * 2.2;
+
+        // 1. Brüt Kazanç Hesaplaması
+        const brutToplam = normalTutar + otomatikIkramiye + mesai1Tutar + mesai2Tutar + cocukYardimi + yakacak;
+
+        // 2. SSK Matrahı (Mesailer dahil, Çocuk ve Yakacak muaf)
+        const sskMatrahi = normalTutar + otomatikIkramiye + mesai1Tutar + mesai2Tutar;
 
         // 3. Primler ve Kesintiler
         const sigortaPrimi = sskMatrahi * 0.14;
@@ -319,6 +336,10 @@
 
         // Arayüze Yazdır
         document.getElementById('normalTutar').value = formatTL(normalTutar);
+        document.getElementById('ikramiye').value = formatTL(otomatikIkramiye);
+        document.getElementById('mesai1Tutar').value = formatTL(mesai1Tutar);
+        document.getElementById('mesai2Tutar').value = formatTL(mesai2Tutar);
+        
         document.getElementById('brutToplam').value = formatTL(brutToplam);
         document.getElementById('sskMatrahi').value = formatTL(sskMatrahi);
         document.getElementById('vergiMatrahi').value = formatTL(vergiMatrahi);
@@ -337,9 +358,9 @@
         document.getElementById('netKazanc').innerText = formatTL(netKazanc);
     }
 
-    // İlk açılışta ikramiyeyi hesapla ve çalıştır
+    // İlk açılışta çalıştır
     window.onload = function() {
-        saatUcretiDegisti();
+        hesapla();
     };
 </script>
 

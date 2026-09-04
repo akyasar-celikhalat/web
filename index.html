@@ -3,236 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maaş ve Bordro Hesaplama</title>
+    <title>Maaş ve Bordro Hesaplama Panel</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #2980b9;
+            --success-color: #27ae60;
+            --danger-color: #c0392b;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #e1e8ed;
+            --text-color: #333333;
+            --readonly-bg: #f8fafc;
+        }
+
         * {
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
         }
+
         body {
-            background-color: #f4f6f9;
-            margin: 20px;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 30px 15px;
         }
-        .container {
-            max-width: 1100px;
+
+        .dashboard {
+            max-width: 1200px;
             margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 10px;
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .grid-3 {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 380px 1fr;
+            gap: 25px;
         }
-        @media (max-width: 850px) {
-            .grid-3 {
+
+        @media (max-width: 992px) {
+            .dashboard {
                 grid-template-columns: 1fr;
             }
         }
-        .section-box {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 12px;
-            background-color: #fafafa;
-        }
-        .section-title {
-            font-weight: bold;
-            font-size: 14px;
+
+        .header-title {
+            grid-column: 1 / -1;
             text-align: center;
-            background: #2c3e50;
-            color: #fff;
-            padding: 6px;
-            border-radius: 4px;
-            margin-bottom: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 10px;
         }
+
+        .header-title h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-color);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #7f8c8d;
+            margin: 15px 0 8px 0;
+            font-weight: 700;
+        }
+
         .form-group {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 13px;
         }
+
         .form-group label {
-            flex: 1;
-            padding-right: 5px;
+            color: #555;
+            font-weight: 500;
         }
+
         .form-group input {
-            width: 110px;
-            padding: 4px 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: 115px;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             text-align: right;
+            font-size: 13px;
+            transition: all 0.2s ease;
         }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
+        }
+
         .form-group input.readonly {
-            background-color: #eef2f5;
-            font-weight: bold;
-            border: 1px solid #d0d7de;
+            background-color: var(--readonly-bg);
+            font-weight: 600;
+            color: var(--primary-color);
+            border-color: #e2e8f0;
         }
-        .summary-bar {
+
+        /* Sağ Taraf - KPI ve Sonuç Kartları */
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .kpi-title {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .net-pay-card {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 22px;
             display: flex;
             justify-content: space-between;
-            background: #2c3e50;
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 6px;
-            margin-top: 20px;
-            font-weight: bold;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(44, 62, 80, 0.2);
+        }
+
+        .net-pay-label {
             font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .net-pay-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2ecc71;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .detail-card {
+            grid-column: 1 / -1;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .highlight-input {
+            background-color: #eef6fb !important;
+            border-color: #bdc3c7 !important;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>ÜCRET BORDROSU HESAPLAMA</h1>
+<div class="dashboard">
+    <div class="header-title">
+        <h1>ÜCRET BORDROSU HESAPLAMA PANELİ</h1>
+    </div>
 
-    <div class="grid-3">
-        <!-- SOL SÜTUN: KAZANÇLAR VE PARAMETRELER -->
-        <div class="section-box">
-            <div class="section-title">KAZANÇLAR & GİRDİLER</div>
-            
-            <div class="form-group">
-                <label>Saat Ücreti (TL):</label>
-                <input type="number" id="saatUcreti" step="0.0001" value="295.78" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>Normal Çalışma (Saat):</label>
-                <input type="number" id="normalSaat" value="225.0" step="0.5" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>Normal Çalışma Tutar:</label>
-                <input type="text" id="normalTutar" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Fazla Mesai 1 (Saat):</label>
-                <input type="number" id="mesai1Saat" value="0" step="0.5" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>Fazla Mesai 1 Tutar:</label>
-                <input type="text" id="mesai1Tutar" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Fazla Mesai 2 (Saat):</label>
-                <input type="number" id="mesai2Saat" value="0" step="0.5" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>Fazla Mesai 2 Tutar:</label>
-                <input type="text" id="mesai2Tutar" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Çocuk Yardımı (TL):</label>
-                <input type="number" id="cocukYardimi" step="0.01" value="0.00" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>Yakacak Yardımı (TL):</label>
-                <input type="number" id="yakacak" step="0.01" value="3034.08" oninput="hesapla()">
-            </div>
-            <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
-            <div class="form-group" style="background-color: #e8f4f8; padding: 4px; border-radius: 4px;">
-                <label><strong>Önceki Küm. V. Matrahı:</strong></label>
-                <input type="number" id="oncekiKumulatif" step="0.01" value="0" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>GV İstisnası (TL):</label>
-                <input type="number" id="gvIstisnasi" step="0.01" value="4537.75" oninput="hesapla()">
-            </div>
-            <div class="form-group">
-                <label>DV İstisnası (TL):</label>
-                <input type="number" id="dvIstisnasi" step="0.01" value="250.70" oninput="hesapla()">
-            </div>
-            <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
-            <div class="form-group">
-                <label>İkramiye Tutar:</label>
-                <input type="text" id="ikramiye" class="readonly" readonly>
-            </div>
+    <!-- SOL SÜTUN: TÜM VERİ GİRİŞLERİ -->
+    <div class="card">
+        <div class="card-header">
+            ⚙️ VERİ GİRİŞ PANELİ
         </div>
 
-        <!-- ORTA SÜTUN: MATRAHLAR VE YASAL KESİNTİLER -->
-        <div class="section-box">
-            <div class="section-title">MATRAHLAR VE YASAL KESİNTİLER</div>
-            
-            <div class="form-group">
-                <label>SSK / İşsizlik Matrahı:</label>
-                <input type="text" id="sskMatrahi" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Vergi Matrahı:</label>
-                <input type="text" id="vergiMatrahi" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Yeni Küm. Vergi Matrahı:</label>
-                <input type="text" id="yeniKumulatif" class="readonly" readonly>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
-            <div class="form-group">
-                <label>Sigorta Primi (%14):</label>
-                <input type="text" id="sigortaPrimi" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>İşsizlik Primi (%1):</label>
-                <input type="text" id="issizlikPrimi" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Sendika Aidatı :</label>
-                <input type="text" id="sendikaAidati" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Brüt Gelir Vergisi:</label>
-                <input type="text" id="brutGV" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Net Gelir Vergisi:</label>
-                <input type="text" id="netGV" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label>Net Damga Vergisi:</label>
-                <input type="text" id="netDV" class="readonly" readonly>
-            </div>
-            <div class="form-group" style="font-weight: bold; color: #c0392b;">
-                <label>Yasal Kesintiler Toplamı:</label>
-                <input type="text" id="yasalKesintiToplam" class="readonly" style="color: #c0392b;" readonly>
-            </div>
+        <div class="section-subtitle">Çalışma ve Ücret Parametreleri</div>
+        <div class="form-group">
+            <label>Saat Ücreti (TL):</label>
+            <input type="number" id="saatUcreti" step="0.0001" value="295.78" class="highlight-input" oninput="hesapla()">
+        </div>
+        <div class="form-group">
+            <label>Normal Çalışma (Saat):</label>
+            <input type="number" id="normalSaat" value="225.0" step="0.5" oninput="hesapla()">
+        </div>
+        <div class="form-group">
+            <label>Fazla Mesai 1 (%100):</label>
+            <input type="number" id="mesai1Saat" value="0" step="0.5" oninput="hesapla()">
+        </div>
+        <div class="form-group">
+            <label>Fazla Mesai 2 (%120):</label>
+            <input type="number" id="mesai2Saat" value="0" step="0.5" oninput="hesapla()">
         </div>
 
-        <!-- SAĞ SÜTUN: ÖZEL KESİNTİLER & ÖZET -->
-        <div class="section-box">
-            <div class="section-title">ÖZEL KESİNTİLER & SONUÇ</div>
-            
-            <div class="form-group">
-                <label>Avans :</label>
-                <input type="number" id="digerKesintiler" step="0.01" value="0" oninput="hesapla()">
-            </div>
-            <div class="form-group" style="font-weight: bold;">
-                <label>Özel Kesintiler Toplamı:</label>
-                <input type="text" id="ozelKesintiToplam" class="readonly" readonly>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
-            
-            <div class="form-group">
-                <label><strong>BRÜT TOPLAM:</strong></label>
-                <input type="text" id="brutToplam" class="readonly" readonly>
-            </div>
-            <div class="form-group">
-                <label><strong>TOPLAM KESİNTİ:</strong></label>
-                <input type="text" id="toplamKesinti" class="readonly" readonly>
-            </div>
+        <div class="section-subtitle">Sosyal Yardımlar</div>
+        <div class="form-group">
+            <label>Çocuk Yardımı (TL):</label>
+            <input type="number" id="cocukYardimi" step="0.01" value="0.00" oninput="hesapla()">
+        </div>
+        <div class="form-group">
+            <label>Yakacak Yardımı (TL):</label>
+            <input type="number" id="yakacak" step="0.01" value="3034.08" oninput="hesapla()">
+        </div>
+
+        <div class="section-subtitle">Vergi & Vergi Öncesi Parametreler</div>
+        <div class="form-group">
+            <label>Önceki Küm. V. Matrahı:</label>
+            <input type="number" id="oncekiKumulatif" step="0.01" value="0" oninput="hesapla()">
+        </div>
+        <div class="form-group">
+            <label>GV İstisnası (TL):</label>
+            <input type="number" id="gvIstisnasi" step="0.01" value="4537.75" oninput="hesapla()">
+        </div>
+        <div class="form-group">
+            <label>DV İstisnası (TL):</label>
+            <input type="number" id="dvIstisnasi" step="0.01" value="250.70" oninput="hesapla()">
+        </div>
+
+        <div class="section-subtitle">Kesintiler ve Avans</div>
+        <div class="form-group">
+            <label>Avans / Özel Kesinti (TL):</label>
+            <input type="number" id="digerKesintiler" step="0.01" value="0" oninput="hesapla()">
         </div>
     </div>
 
-    <!-- ALT BİLGİ BARI (NET KAZANÇ) -->
-    <div class="summary-bar">
-        <span>NET ÖDENEN (ELE GEÇEN):</span>
-        <span id="netKazanc">0,00 TL</span>
+    <!-- SAĞ SÜTUN: CANLI SONUÇLAR VE DETAYLAR -->
+    <div class="results-container">
+        
+        <!-- ÖDENECEK NET MAAŞ KARTI -->
+        <div class="net-pay-card">
+            <div>
+                <div class="net-pay-label">NET ÖDENEN (ELE GEÇEN)</div>
+                <div style="font-size: 12px; color: #bdc3c7; margin-top: 4px;">Tüm yasal ve özel kesintiler düşülmüştür.</div>
+            </div>
+            <div class="net-pay-value" id="netKazanc">0,00 TL</div>
+        </div>
+
+        <!-- ÖZET KPI KARTLARI -->
+        <div class="kpi-card">
+            <span class="kpi-title">BRÜT TOPLAM</span>
+            <span class="kpi-value" id="kpiBrut">0,00 TL</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-title">TOPLAM KESİNTİ</span>
+            <span class="kpi-value" style="color: var(--danger-color);" id="kpiKesinti">0,00 TL</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-title">SGK MATRAHI</span>
+            <span class="kpi-value" id="kpiSsk">0,00 TL</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-title">YENİ KÜMÜLATİF V. MATRAHI</span>
+            <span class="kpi-value" id="kpiKumulatif">0,00 TL</span>
+        </div>
+
+        <!-- DETAY TABLOLARI -->
+        <div class="card detail-card">
+            <div class="card-header">
+                📊 MATRAH VE KESİNTİ DETAYLARI
+            </div>
+            
+            <div class="details-grid">
+                <!-- Hesaplanan Kazançlar -->
+                <div>
+                    <div class="section-subtitle">Hesaplanan Kazanç Detayı</div>
+                    <div class="form-group">
+                        <label>Normal Çalışma Tutar:</label>
+                        <input type="text" id="normalTutar" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>İkramiye Tutar:</label>
+                        <input type="text" id="ikramiye" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Fazla Mesai 1 Tutar:</label>
+                        <input type="text" id="mesai1Tutar" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Fazla Mesai 2 Tutar:</label>
+                        <input type="text" id="mesai2Tutar" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Vergi Matrahı:</label>
+                        <input type="text" id="vergiMatrahi" class="readonly" readonly>
+                    </div>
+                </div>
+
+                <!-- Yasal Kesintiler -->
+                <div>
+                    <div class="section-subtitle">Yasal & Özel Kesintiler</div>
+                    <div class="form-group">
+                        <label>Sigorta Primi (%14):</label>
+                        <input type="text" id="sigortaPrimi" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>İşsizlik Primi (%1):</label>
+                        <input type="text" id="issizlikPrimi" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Sendika Aidatı:</label>
+                        <input type="text" id="sendikaAidati" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Net Gelir Vergisi:</label>
+                        <input type="text" id="netGV" class="readonly" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Net Damga Vergisi:</label>
+                        <input type="text" id="netDV" class="readonly" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -323,27 +446,25 @@
         const genelToplamKesinti = yasalKesintiToplam + ozelKesintiToplam;
         const netKazanc = brutToplam - genelToplamKesinti;
 
-        // Ekrana Yazdır
+        // Ekrana Yazdır - Detaylar
         document.getElementById('normalTutar').value = formatTL(normalTutar);
         document.getElementById('ikramiye').value = formatTL(otomatikIkramiye);
         document.getElementById('mesai1Tutar').value = formatTL(mesai1Tutar);
         document.getElementById('mesai2Tutar').value = formatTL(mesai2Tutar);
         
-        document.getElementById('brutToplam').value = formatTL(brutToplam);
-        document.getElementById('sskMatrahi').value = formatTL(sskMatrahi);
         document.getElementById('vergiMatrahi').value = formatTL(vergiMatrahi);
-        document.getElementById('yeniKumulatif').value = formatTL(yeniKumulatif);
 
         document.getElementById('sigortaPrimi').value = formatTL(sigortaPrimi);
         document.getElementById('issizlikPrimi').value = formatTL(issizlikPrimi);
         document.getElementById('sendikaAidati').value = formatTL(sendikaAidati);
-        document.getElementById('brutGV').value = formatTL(brutGV);
         document.getElementById('netGV').value = formatTL(netGV);
         document.getElementById('netDV').value = formatTL(netDV);
 
-        document.getElementById('yasalKesintiToplam').value = formatTL(yasalKesintiToplam);
-        document.getElementById('ozelKesintiToplam').value = formatTL(ozelKesintiToplam);
-        document.getElementById('toplamKesinti').value = formatTL(genelToplamKesinti);
+        // Ekrana Yazdır - KPI ve Özet
+        document.getElementById('kpiBrut').innerText = formatTL(brutToplam);
+        document.getElementById('kpiKesinti').innerText = formatTL(genelToplamKesinti);
+        document.getElementById('kpiSsk').innerText = formatTL(sskMatrahi);
+        document.getElementById('kpiKumulatif').innerText = formatTL(yeniKumulatif);
         document.getElementById('netKazanc').innerText = formatTL(netKazanc);
     }
 

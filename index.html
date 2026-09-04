@@ -17,17 +17,17 @@
             --readonly-bg: #f8fafc;
         }
 
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* Metin Seçimini Engelleme */
         body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
             background-color: var(--bg-color);
             color: var(--text-color);
             padding: 30px 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
         }
 
         .dashboard {
@@ -123,7 +123,6 @@
             border-color: #e2e8f0;
         }
 
-        /* Sağ Taraf - KPI ve Sonuç Kartları */
         .results-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -205,18 +204,16 @@
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;" onkeydown="return disableDevTools(event);">
 
 <div class="dashboard">
     <div class="header-title">
         <h1>ÜCRET BORDROSU HESAPLAMA PANELİ</h1>
     </div>
 
-    <!-- SOL SÜTUN: TÜM VERİ GİRİŞLERİ -->
+    <!-- SOL SÜTUN: VERİ GİRİŞLERİ -->
     <div class="card">
-        <div class="card-header">
-            ⚙️ VERİ GİRİŞ PANELİ
-        </div>
+        <div class="card-header">⚙️ VERİ GİRİŞ PANELİ</div>
 
         <div class="section-subtitle">Çalışma ve Ücret Parametreleri</div>
         <div class="form-group">
@@ -267,10 +264,8 @@
         </div>
     </div>
 
-    <!-- SAĞ SÜTUN: CANLI SONUÇLAR VE DETAYLAR -->
+    <!-- SAĞ SÜTUN: SONUÇLAR VE DETAYLAR -->
     <div class="results-container">
-        
-        <!-- ÖDENECEK NET MAAŞ KARTI -->
         <div class="net-pay-card">
             <div>
                 <div class="net-pay-label">NET ÖDENEN (ELE GEÇEN)</div>
@@ -279,7 +274,6 @@
             <div class="net-pay-value" id="netKazanc">0,00 TL</div>
         </div>
 
-        <!-- ÖZET KPI KARTLARI -->
         <div class="kpi-card">
             <span class="kpi-title">BRÜT TOPLAM</span>
             <span class="kpi-value" id="kpiBrut">0,00 TL</span>
@@ -297,14 +291,9 @@
             <span class="kpi-value" id="kpiKumulatif">0,00 TL</span>
         </div>
 
-        <!-- DETAY TABLOLARI -->
         <div class="card detail-card">
-            <div class="card-header">
-                📊 MATRAH VE KESİNTİ DETAYLARI
-            </div>
-            
+            <div class="card-header">📊 MATRAH VE KESİNTİ DETAYLARI</div>
             <div class="details-grid">
-                <!-- Hesaplanan Kazançlar -->
                 <div>
                     <div class="section-subtitle">Hesaplanan Kazanç Detayı</div>
                     <div class="form-group">
@@ -329,7 +318,6 @@
                     </div>
                 </div>
 
-                <!-- Yasal Kesintiler -->
                 <div>
                     <div class="section-subtitle">Yasal & Özel Kesintiler</div>
                     <div class="form-group">
@@ -355,122 +343,21 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    function gelirVergisiHesapla(matrah, oncekiKumulatif) {
-        const dilimler = [
-            { limit: 158000, oran: 0.15 },
-            { limit: 330000, oran: 0.20 },
-            { limit: 1200000, oran: 0.27 },
-            { limit: 4300000, oran: 0.35 },
-            { limit: Infinity, oran: 0.40 }
-        ];
-
-        let kalanMatrah = matrah;
-        let mevcutKumulatif = oncekiKumulatif;
-        let hesaplananVergi = 0;
-
-        for (let i = 0; i < dilimler.length; i++) {
-            let altLimit = (i === 0) ? 0 : dilimler[i - 1].limit;
-            let ustLimit = dilimler[i].limit;
-
-            if (mevcutKumulatif < ustLimit) {
-                let buDilimdekiKapasite = ustLimit - Math.max(mevcutKumulatif, altLimit);
-                let buDilimdeVergilenecek = Math.min(kalanMatrah, buDilimdekiKapasite);
-
-                if (buDilimdeVergilenecek > 0) {
-                    hesaplananVergi += buDilimdeVergilenecek * dilimler[i].oran;
-                    kalanMatrah -= buDilimdeVergilenecek;
-                    mevcutKumulatif += buDilimdeVergilenecek;
-                }
-            }
-
-            if (kalanMatrah <= 0) break;
+    // F12, Ctrl+Shift+I, Ctrl+U ve Ctrl+S Engelleme
+    function disableDevTools(e) {
+        if (e.keyCode == 123 || 
+           (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || 
+           (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
+            return false;
         }
-
-        return hesaplananVergi;
     }
 
-    function formatTL(val) {
-        return val.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TL';
-    }
-
-    function hesapla() {
-        const saatUcreti = parseFloat(document.getElementById('saatUcreti').value) || 0;
-        const normalSaat = parseFloat(document.getElementById('normalSaat').value) || 0;
-        const mesai1Saat = parseFloat(document.getElementById('mesai1Saat').value) || 0;
-        const mesai2Saat = parseFloat(document.getElementById('mesai2Saat').value) || 0;
-        const cocukYardimi = parseFloat(document.getElementById('cocukYardimi').value) || 0;
-        const yakacak = parseFloat(document.getElementById('yakacak').value) || 0;
-        
-        const oncekiKumulatif = parseFloat(document.getElementById('oncekiKumulatif').value) || 0;
-        const gvIstisnasi = parseFloat(document.getElementById('gvIstisnasi').value) || 0;
-        const dvIstisnasi = parseFloat(document.getElementById('dvIstisnasi').value) || 0;
-
-        const digerKesintiler = parseFloat(document.getElementById('digerKesintiler').value) || 0;
-
-        // Tutarlar
-        const normalTutar = saatUcreti * normalSaat;
-        const otomatikIkramiye = (saatUcreti * 225) / 3;
-        const mesai1Tutar = saatUcreti * mesai1Saat * 2.0;
-        const mesai2Tutar = saatUcreti * mesai2Saat * 2.2;
-
-        // Brüt Toplam
-        const brutToplam = normalTutar + otomatikIkramiye + mesai1Tutar + mesai2Tutar + cocukYardimi + yakacak;
-
-        // SSK Matrahı (Yakacak yardımı dahil)
-        const sskMatrahi = brutToplam - cocukYardimi;
-
-        // Primler ve Kesintiler
-        const sigortaPrimi = sskMatrahi * 0.14;
-        const issizlikPrimi = sskMatrahi * 0.01;
-        const sendikaAidati = saatUcreti * 7.5;
-
-        // Vergi Matrahı
-        const vergiMatrahi = sskMatrahi - sigortaPrimi - issizlikPrimi - sendikaAidati;
-        const yeniKumulatif = oncekiKumulatif + vergiMatrahi;
-
-        // Vergiler
-        const brutGV = gelirVergisiHesapla(vergiMatrahi, oncekiKumulatif);
-        const netGV = Math.max(0, brutGV - gvIstisnasi);
-
-        const brutDV = brutToplam * 0.00759;
-        const netDV = Math.max(0, brutDV - dvIstisnasi);
-
-        // Toplamlar
-        const yasalKesintiToplam = sigortaPrimi + issizlikPrimi + sendikaAidati + netGV + netDV;
-        const ozelKesintiToplam = digerKesintiler;
-        const genelToplamKesinti = yasalKesintiToplam + ozelKesintiToplam;
-        const netKazanc = brutToplam - genelToplamKesinti;
-
-        // Ekrana Yazdır - Detaylar
-        document.getElementById('normalTutar').value = formatTL(normalTutar);
-        document.getElementById('ikramiye').value = formatTL(otomatikIkramiye);
-        document.getElementById('mesai1Tutar').value = formatTL(mesai1Tutar);
-        document.getElementById('mesai2Tutar').value = formatTL(mesai2Tutar);
-        
-        document.getElementById('vergiMatrahi').value = formatTL(vergiMatrahi);
-
-        document.getElementById('sigortaPrimi').value = formatTL(sigortaPrimi);
-        document.getElementById('issizlikPrimi').value = formatTL(issizlikPrimi);
-        document.getElementById('sendikaAidati').value = formatTL(sendikaAidati);
-        document.getElementById('netGV').value = formatTL(netGV);
-        document.getElementById('netDV').value = formatTL(netDV);
-
-        // Ekrana Yazdır - KPI ve Özet
-        document.getElementById('kpiBrut').innerText = formatTL(brutToplam);
-        document.getElementById('kpiKesinti').innerText = formatTL(genelToplamKesinti);
-        document.getElementById('kpiSsk').innerText = formatTL(sskMatrahi);
-        document.getElementById('kpiKumulatif').innerText = formatTL(yeniKumulatif);
-        document.getElementById('netKazanc').innerText = formatTL(netKazanc);
-    }
-
-    window.onload = function() {
-        hesapla();
-    };
+    // Karıştırılmış (Obfuscated) Hesaplama Mantığı
+    var _0x4a12=["\x76\x61\x6C\x75\x65","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x73\x61\x61\x74\x55\x63\x72\x65\x74\x69","\x6E\x6F\x72\x6D\x61\x6C\x53\x61\x61\x74","\x6D\x65\x73\x61\x69\x31\x53\x61\x61\x74","\x6D\x65\x73\x61\x69\x32\x53\x61\x61\x74","\x63\x6F\x63\x75\x6B\x59\x61\x72\x64\x69\x6D\x69","\x79\x61\x6B\x61\x63\x61\x6B","\x6F\x6E\x63\x65\x6B\x69\x4B\x75\x6D\x75\x6C\x61\x74\x69\x66","\x67\x76\x49\x73\x74\x69\x73\x6E\x61\x73\x69","\x64\x76\x49\x73\x74\x69\x73\x6E\x61\x73\x69","\x64\x69\x67\x65\x72\x4B\x65\x73\x69\x6E\x74\x69\x6C\x65\x72","\x74\x6F\x4C\x6F\x63\x61\x6C\x65\x53\x74\x72\x69\x6E\x67","\x74\x72\x2D\x54\x52","\x6E\x6F\x72\x6D\x61\x6C\x54\x75\x74\x61\x72","\x69\x6B\x72\x61\x6D\x69\x79\x65","\x6D\x65\x73\x61\x69\x31\x54\x75\x74\x61\x72","\x6D\x65\x73\x61\x69\x32\x54\x75\x74\x61\x72","\x76\x65\x72\x67\x69\x4D\x61\x74\x72\x61\x68\x69","\x73\x69\x67\x6F\x72\x74\x61\x50\x72\x69\x6D\x69","\x69\x73\x73\x69\x7A\x6C\x69\x6B\x50\x72\x69\x6D\x69","\x73\x65\x6E\x64\x69\x6B\x61\x41\x69\x64\x61\x74\x69","\x6E\x65\x74\x47\x56","\x6E\x65\x74\x44\x56","\x6B\x70\x69\x42\x72\x75\x74","\x69\x6E\x6E\x65\x72\x54\x65\x78\x74","\x6B\x70\x69\x4B\x65\x73\x69\x6E\x74\x69","\x6B\x70\x69\x53\x73\x6B","\x6B\x70\x69\x4B\x75\x6D\x75\x6C\x61\x74\x69\x66","\x6E\x65\x74\x4B\x61\x7A\x61\x6E\x63"];function gelirVergisiHesapla(_0x2d1cx2,_0x2d1cx3){const _0x2d1cx4=[{limit:158000,oran:0.15},{limit:330000,oran:0.2},{limit:1200000,oran:0.27},{limit:4300000,oran:0.35},{limit:Infinity,oran:0.4}];let _0x2d1cx5=_0x2d1cx2;let _0x2d1cx6=_0x2d1cx3;let _0x2d1cx7=0;for(let _0x2d1cx8=0;_0x2d1cx8<_0x2d1cx4.length;_0x2d1cx8++){let _0x2d1cx9=(_0x2d1cx8===0)?0:_0x2d1cx4[_0x2d1cx8-1].limit;let _0x2d1cxa=_0x2d1cx4[_0x2d1cx8].limit;if(_0x2d1cx6<_0x2d1cxa){let _0x2d1cxb=_0x2d1cxa-Math.max(_0x2d1cx6,_0x2d1cx9);let _0x2d1cxc=Math.min(_0x2d1cx5,_0x2d1cxb);if(_0x2d1cxc>0){_0x2d1cx7+=_0x2d1cxc*_0x2d1cx4[_0x2d1cx8].oran;_0x2d1cx5-=_0x2d1cxc;_0x2d1cx6+=_0x2d1cxc}}if(_0x2d1cx5<=0)break}return _0x2d1cx7}function formatTL(_0x2d1cxd){return _0x2d1cxd[_0x4a12[12]](_0x4a12[13],{minimumFractionDigits:2,maximumFractionDigits:2})+ " TL"}function hesapla(){const _0x2d1cxe=parseFloat(document[_0x4a12[1]](_0x4a12[2])[_0x4a12[0]])||0;const _0x2d1cxf=parseFloat(document[_0x4a12[1]](_0x4a12[3])[_0x4a12[0]])||0;const _0x2d1cx10=parseFloat(document[_0x4a12[1]](_0x4a12[4])[_0x4a12[0]])||0;const _0x2d1cx11=parseFloat(document[_0x4a12[1]](_0x4a12[5])[_0x4a12[0]])||0;const _0x2d1cx12=parseFloat(document[_0x4a12[1]](_0x4a12[6])[_0x4a12[0]])||0;const _0x2d1cx13=parseFloat(document[_0x4a12[1]](_0x4a12[7])[_0x4a12[0]])||0;const _0x2d1cx14=parseFloat(document[_0x4a12[1]](_0x4a12[8])[_0x4a12[0]])||0;const _0x2d1cx15=parseFloat(document[_0x4a12[1]](_0x4a12[9])[_0x4a12[0]])||0;const _0x2d1cx16=parseFloat(document[_0x4a12[1]](_0x4a12[10])[_0x4a12[0]])||0;const _0x2d1cx17=parseFloat(document[_0x4a12[1]](_0x4a12[11])[_0x4a12[0]])||0;const _0x2d1cx18=_0x2d1cxe*_0x2d1cxf;const _0x2d1cx19=(_0x2d1cxe*225)/3;const _0x2d1cx1a=_0x2d1cxe*_0x2d1cx10*2;const _0x2d1cx1b=_0x2d1cxe*_0x2d1cx11*2.2;const _0x2d1cx1c=_0x2d1cx18+_0x2d1cx19+_0x2d1cx1a+_0x2d1cx1b+_0x2d1cx12+_0x2d1cx13;const _0x2d1cx1d=_0x2d1cx1c-_0x2d1cx12;const _0x2d1cx1e=_0x2d1cx1d*0.14;const _0x2d1cx1f=_0x2d1cx1d*0.01;const _0x2d1cx20=_0x2d1cxe*7.5;const _0x2d1cx21=_0x2d1cx1d-_0x2d1cx1e-_0x2d1cx1f-_0x2d1cx20;const _0x2d1cx22=_0x2d1cx14+_0x2d1cx21;const _0x2d1cx23=gelirVergisiHesapla(_0x2d1cx21,_0x2d1cx14);const _0x2d1cx24=Math.max(0,_0x2d1cx23-_0x2d1cx15);const _0x2d1cx25=_0x2d1cx1c*0.00759;const _0x2d1cx26=Math.max(0,_0x2d1cx25-_0x2d1cx16);const _0x2d1cx27=_0x2d1cx1e+_0x2d1cx1f+_0x2d1cx20+_0x2d1cx24+_0x2d1cx26;const _0x2d1cx28=_0x2d1cx27+_0x2d1cx17;const _0x2d1cx29=_0x2d1cx1c-_0x2d1cx28;document[_0x4a12[1]](_0x4a12[14])[_0x4a12[0]]=formatTL(_0x2d1cx18);document[_0x4a12[1]](_0x4a12[15])[_0x4a12[0]]=formatTL(_0x2d1cx19);document[_0x4a12[1]](_0x4a12[16])[_0x4a12[0]]=formatTL(_0x2d1cx1a);document[_0x4a12[1]](_0x4a12[17])[_0x4a12[0]]=formatTL(_0x2d1cx1b);document[_0x4a12[1]](_0x4a12[18])[_0x4a12[0]]=formatTL(_0x2d1cx21);document[_0x4a12[1]](_0x4a12[19])[_0x4a12[0]]=formatTL(_0x2d1cx1e);document[_0x4a12[1]](_0x4a12[20])[_0x4a12[0]]=formatTL(_0x2d1cx1f);document[_0x4a12[1]](_0x4a12[21])[_0x4a12[0]]=formatTL(_0x2d1cx20);document[_0x4a12[1]](_0x4a12[22])[_0x4a12[0]]=formatTL(_0x2d1cx24);document[_0x4a12[1]](_0x4a12[23])[_0x4a12[0]]=formatTL(_0x2d1cx26);document[_0x4a12[1]](_0x4a12[24])[_0x4a12[25]]=formatTL(_0x2d1cx1c);document[_0x4a12[1]](_0x4a12[26])[_0x4a12[25]]=formatTL(_0x2d1cx28);document[_0x4a12[1]](_0x4a12[27])[_0x4a12[25]]=formatTL(_0x2d1cx1d);document[_0x4a12[1]](_0x4a12[28])[_0x4a12[25]]=formatTL(_0x2d1cx22);document[_0x4a12[1]](_0x4a12[29])[_0x4a12[25]]=formatTL(_0x2d1cx29)}window.onload=function(){hesapla()};
 </script>
 
 </body>

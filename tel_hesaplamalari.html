@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.tailwindcss.com;">
+  <title>Tel Hesaplamaları</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+
+    *, *::before, *::after { 
+      box-sizing: border-box !important; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden !important;
+      background-color: var(--bg); 
+      color: var(--text); 
+      padding-bottom: 75px; 
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container { 
+      width: 100%; 
+      max-width: 500px; 
+      padding: 12px; 
+      box-sizing: border-box;
+    }
+
+    header { background: var(--primary); color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: relative; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    header p { font-size: 0.8rem; opacity: 0.8; margin-top: 2px; }
+
+    .home-link {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      background: rgba(255,255,255,0.15);
+      padding: 8px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+    .home-link:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .tab-content { display: none; flex-direction: column; gap: 16px; width: 100%; }
+    .tab-content.active { display: flex; }
+
+    .card { background: var(--card-bg); border-radius: 12px; padding: 16px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box; }
+    .card-title { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 12px; border-bottom: 2px solid var(--bg); padding-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+
+    .grid-2 { 
+      display: grid; 
+      grid-template-columns: repeat(2, minmax(0, 1fr)); 
+      gap: 10px; 
+      width: 100%;
+    }
+
+    @media (max-width: 360px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .input-group { display: flex; flex-direction: column; gap: 4px; width: 100%; min-width: 0; }
+    label { font-size: 0.78rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    input { 
+      width: 100% !important; 
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      padding: 10px; 
+      border: 1px solid var(--border); 
+      border-radius: 8px; 
+      font-size: 0.9rem; 
+      outline: none; 
+      transition: 0.2s; 
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+
+    .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 6px; transition: 0.2s; }
+    .btn:hover { background: var(--primary-light); }
+
+    .result-box { background: #eff6ff; border-left: 4px solid var(--primary-light); padding: 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; word-break: break-all; margin-top: 8px; }
+    .stat-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: white; }
+    .badge-ok { background: var(--success); }
+    .badge-warn { background: var(--warning); }
+
+    .check-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 0.82rem; gap: 8px; }
+    .check-item:last-child { border-bottom: none; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.82rem; }
+    th, td { padding: 8px 4px; text-align: center; border-bottom: 1px solid var(--border); }
+    th { background: #f1f5f9; color: var(--muted); font-weight: 600; }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 50; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; color: var(--muted); font-size: 0.75rem; font-weight: 600; cursor: pointer; padding: 4px 12px; }
+    .nav-item.active { color: var(--primary); }
+    .nav-item i { width: 20px; height: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <!-- GÜNCELLENEN SOL ÜST ANA SAYFA BUTONU -->
+    <a href="index.html" class="home-link" title="Ana Sayfaya Dön">
+      <i data-lucide="home" class="w-5 h-5"></i>
+    </a>
+    <h1>Tel & Hadde Serisi Hesaplamaları</h1>
+    <p>Hazırlayan: Yaşar AK</p>
+  </header>
+
+  <!-- TAB 1: HADDE SERİSİ -->
+  <div id="tab-hadde" class="tab-content active">
+    <div class="card">
+      <div class="card-title">
+        <i data-lucide="layers" class="w-5 h-5 text-blue-800"></i>
+        Hadde Serisi Hesabı
+      </div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label for="h_giris">Giriş Çapı (mm)</label>
+          <input type="number" step="0.01" id="h_giris" value="5.50">
+        </div>
+        <div class="input-group">
+          <label for="h_cikis">Çıkış Çapı (mm)</label>
+          <input type="number" step="0.01" id="h_cikis" value="2.00">
+        </div>
+        <div class="input-group">
+          <label for="h_paso">Paso Sayısı</label>
+          <input type="number" id="h_paso" value="7">
+        </div>
+        <div class="input-group">
+          <label for="h_fark">Kesit Düşme Farkı (%)</label>
+          <input type="number" step="0.1" id="h_fark" value="4.0">
+        </div>
+      </div>
+      <button class="btn" onclick="hesaplaHadde()">Seri Bul & Kontrol Et</button>
+    </div>
+
+    <div id="h_sonuclar" style="display:none; flex-direction:column; gap:16px;">
+      <div class="card">
+        <div class="card-title">Hadde Çap Dizilimi</div>
+        <div class="result-box" id="h_res_seri">-</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Teknik Kontroller</div>
+        <div id="h_res_kontroller"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Passo Detay Tablosu</div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr><th>Paso</th><th>Çap (mm)</th><th>Kesit Düşümü (%)</th></tr>
+            </thead>
+            <tbody id="h_res_tablo"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: KOPMA YÜKÜ -->
+  <div id="tab-kopma" class="tab-content">
+    <div class="card">
+      <div class="card-title">
+        <i data-lucide="activity" class="w-5 h-5 text-blue-800"></i>
+        Kopma Yükü Hesabı
+      </div>
+      <div class="input-group">
+        <label for="k_giris">Giriş Çapı (mm)</label>
+        <input type="number" step="0.01" id="k_giris" placeholder="Örn: 5.50">
+      </div>
+      <div class="input-group">
+        <label for="k_cikis">Çıkış Çapı (mm)</label>
+        <input type="number" step="0.01" id="k_cikis" placeholder="Örn: 2.00">
+      </div>
+      <div class="input-group">
+        <label for="k_filmasin">Filmaşin Kopması (kg/mm²)</label>
+        <input type="number" step="0.1" id="k_filmasin" placeholder="Örn: 42.0">
+      </div>
+      <button class="btn" onclick="hesaplaKopma()">Kopma Yükünü Hesapla</button>
+    </div>
+
+    <div id="k_sonuclar" class="card" style="display:none;">
+      <div class="card-title">Hesaplama Sonuçları</div>
+      <div class="result-box" id="k_res_mukavemet" style="margin-bottom:8px;"></div>
+      <div class="result-box" id="k_res_yuk"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: ÇELİK TEL HESAPLAYICI -->
+  <div id="tab-kilo" class="tab-content">
+    <div class="card">
+      <div class="card-title">
+        <i data-lucide="calculator" class="w-5 h-5 text-blue-800"></i>
+        Çelik Tel Ağırlık / Uzunluk Hesaplayıcı
+      </div>
+
+      <div class="space-y-3 my-2">
+        <div class="flex items-center gap-2">
+          <label class="text-gray-700 font-medium w-28 text-xs">Çap (mm):</label>
+          <input type="number" id="diameter" placeholder="Örn: 2.5" step="0.01" />
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label class="text-gray-700 font-medium w-28 text-xs">Uzunluk (m):</label>
+          <input type="number" id="length" placeholder="Örn: 100" step="0.1" />
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label class="text-gray-700 font-medium w-28 text-xs">Ağırlık (kg):</label>
+          <input type="number" id="weight" placeholder="Örn: 3.85" step="0.001" />
+        </div>
+      </div>
+
+      <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+        <p class="text-xs font-semibold text-blue-900 leading-relaxed">
+          💡 Herhangi iki değeri girin, üçüncü değer anlık olarak otomatik hesaplanacaktır.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="switchTab('tab-hadde', this)">
+    <i data-lucide="layers"></i>
+    Hadde Serisi
+  </button>
+  <button class="nav-item" onclick="switchTab('tab-kopma', this)">
+    <i data-lucide="activity"></i>
+    Kopma Yükü
+  </button>
+  <button class="nav-item" onclick="switchTab('tab-kilo', this)">
+    <i data-lucide="calculator"></i>
+    Ağırlık / Uzunluk
+  </button>
+</nav>
+
+<script src="js/security.js"></script>
+<script>
+  lucide.createIcons();
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  /* OBFUSCATED & PROTECTED CORE LOGIC EXECUTION */
+  var _0x4f12=["\x76\x61\x6C\x75\x65","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x4C\xF1\x74\x66\x65\x6E\x20\x67\x65\xE7\x65\x72\x6C\x69\x20\x76\x65\x20\x6D\x61\x6E\x74\xF1\x6B\x6C\xF1\x20\x64\x65\xF0\x65\x72\x6C\x65\x72\x20\x67\x69\x72\x69\x6E\x2E","\x69\x6E\x6E\x65\x72\x54\x65\x78\x74","\x68\x5F\x72\x65\x73\x5F\x73\x65\x72\x69","\x20\x2D\x20","\x6A\x6F\x69\x6E","\x68\x5F\x72\x65\x73\x5F\x6B\x6F\x6E\x74\x72\x6F\x6C\x6C\x65\x72","\x63\x72\x65\x61\x74\x65\x45\x6C\x65\x6D\x65\x6E\x74","\x64\x69\x76","\x63\x68\x65\x63\x6B\x2D\x69\x74\x65\x6D","\x63\x6C\x61\x73\x73\x4E\x61\x6D\x65","\x73\x70\x61\x6E","\x73\x74\x61\x74\x2D\x62\x61\x64\x67\x65\x20","\x62\x61\x64\x67\x65\x2D\x6F\x6B","\x62\x61\x64\x67\x65\x2D\x77\x61\x72\x6E","\x55\x59\x47\x55\x4E","\x55\x59\x41\x52\x49","\x61\x70\x70\x65\x6E\x64\x43\x68\x69\x6C\x64","\x68\x5F\x72\x65\x73\x5F\x74\x61\x62\x6C\x6F","\x74\x72","\x74\x64","\x2E\x20\x50\x61\x73\x73\x6F","\x25\x20"];
+
+  function hesaplaHadde() {
+    const g = parseFloat(document.getElementById('h_giris').value);
+    const c = parseFloat(document.getElementById('h_cikis').value);
+    const p = parseInt(document.getElementById('h_paso').value);
+    const f = parseFloat(document.getElementById('h_fark').value);
+
+    if (!g || !c || !p || g <= c || p <= 0 || f < 0) {
+      alert(_0x4f12[2]);
+      return;
+    }
+
+    const bK = g * g * 0.785;
+    const nK = c * c * 0.785;
+    const oD = 100.0 * (1.0 - Math.pow(nK / bK, 1.0 / p));
+    const tKD = (100.0 * (bK - nK)) / bK;
+    const hHKD = 2.0 * ((f / 2.0) / (p - 1.0));
+    const iC = Math.sqrt((Math.pow(g / 2.0, 2.0) * Math.PI) / Math.PI) * 2.0;
+
+    let sKC = [iC], sKY = [0.0];
+    for (let i = 1; i <= p; i++) {
+      sKC[i] = Math.pow(((sKC[i - 1] * sKC[i - 1]) * (100.0 - oD)) / 100.0, 0.5);
+      sKY[i] = (100.0 * ((sKC[i - 1] * sKC[i - 1]) - (sKC[i] * sKC[i]))) / (sKC[i - 1] * sKC[i - 1]);
+    }
+
+    let aKY = [0.0], aKAD = [0.0], aKC = [iC];
+    for (let i = 1; i <= p; i++) {
+      if (i === 1) {
+        aKY[i] = sKY[i] + (f / 2.0);
+        aKAD[i] = (bK * (100.0 - aKY[i])) / 100.0;
+      } else {
+        aKY[i] = aKY[i - 1] - hHKD;
+        aKAD[i] = (aKAD[i - 1] * (100.0 - aKY[i])) / 100.0;
+      }
+      aKC[i] = Math.pow(aKAD[i] / 0.785, 0.5);
+    }
+
+    let cD = [];
+    for (let i = 1; i <= p; i++) cD.push(aKC[i].toFixed(2));
+    document.getElementById(_0x4f12[4]).textContent = cD.join(_0x4f12[5]);
+
+    const ctrls = [];
+    ctrls.push({ label: "Ortalama Deformasyon", msg: oD < 18.0 ? "Hadde sayısı azaltılmalı" : (oD > 22.0 ? "Hadde sayısı artırılmalı" : "Hadde sayısı uygun"), ok: oD >= 18.0 && oD <= 22.0 });
+    ctrls.push({ label: "Toplam Kesit Düşümü", msg: tKD > 92.0 ? "Giriş çapı azaltılmalı" : "Giriş çapı uygun", ok: tKD <= 92.0 });
+    ctrls.push({ label: "2. Passo Deformasyonu", msg: aKY[2] > 26.0 ? "Deformasyon farkı azaltılmalı" : "Deformasyon farkı uygun", ok: aKY[2] <= 26.0 });
+    ctrls.push({ label: "Son Passo Düşümü", msg: aKY[p] < 15.0 ? "Kesit düşme farkı azaltılmalı" : "Kesit düşme farkı uygun", ok: aKY[p] >= 15.0 });
+
+    const kBox = document.getElementById(_0x4f12[7]);
+    kBox.innerHTML = '';
+    ctrls.forEach(item => {
+      const row = document.createElement(_0x4f12[9]);
+      row.className = _0x4f12[10];
+
+      const txtSpan = document.createElement(_0x4f12[12]);
+      txtSpan.textContent = item.label + ": " + item.msg;
+
+      const badge = document.createElement(_0x4f12[12]);
+      badge.className = _0x4f12[13] + (item.ok ? _0x4f12[14] : _0x4f12[15]);
+      badge.textContent = item.ok ? _0x4f12[16] : _0x4f12[17];
+
+      row.appendChild(txtSpan);
+      row.appendChild(badge);
+      kBox.appendChild(row);
+    });
+
+    const tBody = document.getElementById(_0x4f12[19]);
+    tBody.innerHTML = '';
+    
+    // Giriş row
+    let trG = document.createElement(_0x4f12[20]);
+    trG.innerHTML = `<td>0 (Giriş)</td><td>${g.toFixed(2)}</td><td>-</td>`;
+    tBody.appendChild(trG);
+
+    for (let i = 1; i <= p; i++) {
+      let tr = document.createElement(_0x4f12[20]);
+      tr.innerHTML = `<td><strong>${i}${_0x4f12[22]}</strong></td><td>${aKC[i].toFixed(2)}</td><td>${_0x4f12[23]}${aKY[i].toFixed(2)}</td>`;
+      tBody.appendChild(tr);
+    }
+
+    document.getElementById('h_sonuclar').style.display = 'flex';
+  }
+
+  function hesaplaKopma() {
+    const g = parseFloat(document.getElementById('k_giris').value);
+    const c = parseFloat(document.getElementById('k_cikis').value);
+    const f = parseFloat(document.getElementById('k_filmasin').value);
+
+    if (!g || !c || !f || g <= 0 || c <= 0 || f <= 0) {
+      alert("Lütfen tüm alanlara geçerli pozitif değerler girin.");
+      return;
+    }
+
+    const kKg = Math.sqrt(g / c) * f;
+    const kN = kKg * Math.PI * (Math.pow(c, 2) / 4.0);
+
+    document.getElementById('k_res_mukavemet').textContent = "Kopma Mukavemeti: " + Math.round(kKg) + " kg/mm²";
+    document.getElementById('k_res_yuk').textContent = "Kopma Yükü: " + Math.round(kN) + " kgf";
+    document.getElementById('k_sonuclar').style.display = 'block';
+  }
+
+  // Steel Dynamic Calc
+  const STEEL_DENSITY = 7.85;
+  const dInput = document.getElementById('diameter');
+  const lInput = document.getElementById('length');
+  const wInput = document.getElementById('weight');
+
+  function cWeight(d, l) {
+    if (isNaN(d) || isNaN(l) || d <= 0 || l <= 0) return '';
+    return Math.round((Math.PI * Math.pow(d/2, 2) * l * STEEL_DENSITY / 1000) * 100) / 100;
+  }
+
+  function cLength(d, w) {
+    if (isNaN(d) || isNaN(w) || d <= 0 || w <= 0) return '';
+    return Math.round(((w * 1000) / (Math.PI * Math.pow(d/2, 2) * STEEL_DENSITY)) * 10) / 10;
+  }
+
+  function cDiameter(l, w) {
+    if (isNaN(l) || isNaN(w) || l <= 0 || w <= 0) return '';
+    return Math.round((Math.sqrt((w * 1000) / (Math.PI * l * STEEL_DENSITY)) * 2) * 100) / 100;
+  }
+
+  function handleInputChange(e) {
+    const src = e.target;
+    const val = parseFloat(src.value);
+
+    if (!src.value || val <= 0) {
+      if (src !== dInput) dInput.value = '';
+      if (src !== lInput) lInput.value = '';
+      if (src !== wInput) wInput.value = '';
+      return;
+    }
+
+    const hasD = dInput.value !== '';
+    const hasL = lInput.value !== '';
+    const hasW = wInput.value !== '';
+
+    if (src === dInput) {
+      if (hasL) wInput.value = cWeight(val, parseFloat(lInput.value));
+      else if (hasW) lInput.value = cLength(val, parseFloat(wInput.value));
+    } else if (src === lInput) {
+      if (hasD) wInput.value = cWeight(parseFloat(dInput.value), val);
+      else if (hasW) dInput.value = cDiameter(val, parseFloat(wInput.value));
+    } else if (src === wInput) {
+      if (hasD) lInput.value = cLength(parseFloat(dInput.value), val);
+      else if (hasL) dInput.value = cDiameter(parseFloat(lInput.value), val);
+    }
+  }
+
+  dInput.addEventListener('input', handleInputChange);
+  lInput.addEventListener('input', handleInputChange);
+  wInput.addEventListener('input', handleInputChange);
+</script>
+
+</body>
+</html>

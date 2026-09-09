@@ -219,7 +219,6 @@
             <span class="switch-title" id="switchStatusLabel">Çalışan</span>
             <label class="switch">
                 <input type="checkbox" id="emekliSwitch" onchange="hesapla()">
-                <span class="slider"></span>
             </label>
         </div>
 
@@ -264,11 +263,19 @@
             <label>DV İstisnası (TL):</label>
             <input type="number" id="dvIstisnasi" step="0.01" value="250.70" oninput="hesapla()">
         </div>
+        <div class="form-group">
+            <label>Diğer Ek Brüt Kazançlar (TL):</label>
+            <input type="number" id="digerBrutKazanc" step="0.01" value="0" oninput="hesapla()">
+        </div>
 
         <div class="section-subtitle">Kesintiler ve Avans</div>
         <div class="form-group">
             <label>Avans / Özel Kesinti (TL):</label>
             <input type="number" id="digerKesintiler" step="0.01" value="0" oninput="hesapla()">
+        </div>
+        <div class="form-group">
+            <label>Maaş Öncesi Ödenen / Diğer (TL):</label>
+            <input type="number" id="oncedenOdenenDiğer" step="0.01" value="0" oninput="hesapla()">
         </div>
     </div>
 
@@ -363,96 +370,158 @@
         }
     }
 
-    var _0x53f1=["\x76\x61\x6C\x75\x65","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x65\x6D\x65\x6B\x6C\x69\x53\x77\x69\x74\x63\x68","\x63\x68\x65\x63\x6B\x65\x64","\x73\x61\x61\x74\x55\x63\x72\x65\x74\x69","\x6E\x6F\x72\x6D\x61\x6C\x53\x61\x61\x74","\x6D\x65\x73\x61\x69\x31\x53\x61\x61\x74","\x6D\x65\x73\x61\x69\x32\x53\x61\x61\x74","\x63\x6F\x63\x75\x6B\x59\x61\x72\x64\x69\x6D\x69","\x79\x61\x6B\x61\x63\x61\x6B","\x6F\x6E\x63\x65\x6B\x69\x4B\x75\x6D\x75\x6C\x61\x74\x69\x66","\x67\x76\x49\x73\x74\x69\x73\x6E\x61\x73\x69","\x64\x76\x49\x73\x74\x69\x73\x6E\x61\x73\x69","\x64\x69\x67\x65\x72\x4B\x65\x73\x69\x6E\x74\x69\x6C\x65\x72","\x6C\x62\x6C\x53\x69\x67\x6F\x72\x74\x61\x50\x72\x69\x6D\x69","\x69\x6E\x6E\x65\x72\x54\x65\x78\x74","\x45\x6D\x65\x6B\x6C\x69\x20\x53\x47\x44\x50\x20\x50\x72\x69\x6D\x69\x20\x28\x25\x37\x2C\x35\x29\x3A","\x43\x61\x6C\x69\x73\x61\x6E\x20\x53\x47\x4B\x20\x50\x72\x69\x6D\x69\x20\x28\x25\x31\x34\x29\x3A","\x6C\x62\x6C\x49\x73\x73\x69\x7A\x6C\x69\x6B\x50\x72\x69\x6D\x69","\x49\x73\x73\x69\x7A\x6C\x69\x6B\x20\x50\x72\x69\x6D\x69\x20\x28\x25\x30\x29\x3A","\x49\x73\x73\x69\x7A\x6C\x69\x6B\x20\x50\x72\x69\x6D\x69\x20\x28\x25\x31\x29\x3A","\x74\x6F\x4C\x6F\x63\x61\x6C\x65\x53\x74\x72\x69\x6E\x67","\x74\x72\x2D\x54\x52","\x6E\x6F\x72\x6D\x61\x6C\x54\x75\x74\x61\x72","\x69\x6B\x72\x61\x6D\x69\x79\x65","\x6D\x65\x73\x61\x69\x31\x54\x75\x74\x61\x72","\x6D\x65\x73\x61\x69\x32\x54\x75\x74\x61\x72","\x76\x65\x72\x67\x69\x4D\x61\x74\x72\x61\x68\x69","\x73\x69\x67\x6F\x72\x74\x61\x50\x72\x69\x6D\x69","\x69\x73\x73\x69\x7A\x6C\x69\x6B\x50\x72\x69\x6D\x69","\x73\x65\x6E\x64\x69\x6B\x61\x41\x69\x64\x61\x74\x69","\x6E\x65\x74\x47\x56","\x6E\x65\x74\x44\x56","\x6B\x70\x69\x42\x72\x75\x74","\x6B\x70\x69\x4B\x65\x73\x69\x6E\x74\x69","\x6B\x70\x69\x53\x73\x6B","\x6B\x70\x69\x4B\x75\x6D\x75\x6C\x61\x74\x69\x66","\x6E\x65\x74\x4B\x61\x7A\x61\x6E\x63","\x73\x77\x69\x74\x63\x68\x53\x74\x61\x74\x75\x73\x4C\x61\x62\x65\x6C","\x45\x6D\x65\x6B\x6C\x69","\x43\x61\x6C\x69\x73\x61\x6E"];
-    
-    function gelirVergisiHesapla(_0x22a0x2,_0x22a0x3){
-        const _0x22a0x4=[{limit:158000,oran:0.15},{limit:330000,oran:0.2},{limit:1200000,oran:0.27},{limit:4300000,oran:0.35},{limit:Infinity,oran:0.4}];
-        let _0x22a0x5=_0x22a0x2;
-        let _0x22a0x6=_0x22a0x3;
-        let _0x22a0x7=0;
-        for(let _0x22a0x8=0;_0x22a0x8<_0x22a0x4.length;_0x22a0x8++){
-            let _0x22a0x9=(_0x22a0x8===0)?0:_0x22a0x4[_0x22a0x8-1].limit;
-            let _0x22a0xa=_0x22a0x4[_0x22a0x8].limit;
-            if(_0x22a0x6<_0x22a0xa){
-                let _0x22a0xb=_0x22a0xa-Math.max(_0x22a0x6,_0x22a0x9);
-                let _0x22a0xc=Math.min(_0x22a0x5,_0x22a0xb);
-                if(_0x22a0xc>0){
-                    _0x22a0x7+=_0x22a0xc*_0x22a0x4[_0x22a0x8].oran;
-                    _0x22a0x5-=_0x22a0xc;
-                    _0x22a0x6+=_0x22a0xc
+    const inputIDs = [
+        "emekliSwitch", "saatUcreti", "normalSaat", "mesai1Saat", "mesai2Saat",
+        "cocukYardimi", "yakacak", "oncekiKumulatif", "gvIstisnasi", "dvIstisnasi",
+        "digerBrutKazanc", "digerKesintiler", "oncedenOdenenDiğer"
+    ];
+
+    function saveInputs() {
+        inputIDs.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                if (el.type === "checkbox") {
+                    localStorage.setItem("bordro_" + id, el.checked);
+                } else {
+                    localStorage.setItem("bordro_" + id, el.value);
                 }
             }
-            if(_0x22a0x5<=0)break
+        });
+    }
+
+    function loadInputs() {
+        inputIDs.forEach(id => {
+            const savedValue = localStorage.getItem("bordro_" + id);
+            if (savedValue !== null) {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (el.type === "checkbox") {
+                        el.checked = (savedValue === "true");
+                    } else {
+                        el.value = savedValue;
+                    }
+                }
+            }
+        });
+    }
+
+    function gelirVergisiHesapla(matrah, kumulatif) {
+        const dilimler = [
+            {limit: 158000, oran: 0.15},
+            {limit: 330000, oran: 0.20},
+            {limit: 1200000, oran: 0.27},
+            {limit: 4300000, oran: 0.35},
+            {limit: Infinity, oran: 0.40}
+        ];
+        let kalanMatrah = matrah;
+        let mevcutKumulatif = kumulatif;
+        let toplamVergi = 0;
+
+        for (let i = 0; i < dilimler.length; i++) {
+            let altLimit = (i === 0) ? 0 : dilimler[i - 1].limit;
+            let ustLimit = dilimler[i].limit;
+
+            if (mevcutKumulatif < ustLimit) {
+                let dilimKapasite = ustLimit - Math.max(mevcutKumulatif, altLimit);
+                let vergilenecekMiktar = Math.min(kalanMatrah, dilimKapasite);
+
+                if (vergilenecekMiktar > 0) {
+                    toplamVergi += vergilenecekMiktar * dilimler[i].oran;
+                    kalanMatrah -= vergilenecekMiktar;
+                    mevcutKumulatif += vergilenecekMiktar;
+                }
+            }
+            if (kalanMatrah <= 0) break;
         }
-        return _0x22a0x7
+        return toplamVergi;
     }
 
-    function formatTL(_0x22a0xd){
-        return _0x22a0xd[_0x53f1[21]](_0x53f1[22],{minimumFractionDigits:2,maximumFractionDigits:2})+ " TL"
+    function formatTL(val) {
+        return val.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
     }
 
-    function hesapla(){
-        const _0x22a0xe=document[_0x53f1[1]](_0x53f1[2])[_0x53f1[3]];
-        const _0x22a0xf=parseFloat(document[_0x53f1[1]](_0x53f1[4])[_0x53f1[0]])||0;
-        const _0x22a0x10=parseFloat(document[_0x53f1[1]](_0x53f1[5])[_0x53f1[0]])||0;
-        const _0x22a0x11=parseFloat(document[_0x53f1[1]](_0x53f1[6])[_0x53f1[0]])||0;
-        const _0x22a0x12=parseFloat(document[_0x53f1[1]](_0x53f1[7])[_0x53f1[0]])||0;
-        const _0x22a0x13=parseFloat(document[_0x53f1[1]](_0x53f1[8])[_0x53f1[0]])||0;
-        const _0x22a0x14=parseFloat(document[_0x53f1[1]](_0x53f1[9])[_0x53f1[0]])||0;
-        const _0x22a0x15=parseFloat(document[_0x53f1[1]](_0x53f1[10])[_0x53f1[0]])||0;
-        const _0x22a0x16=parseFloat(document[_0x53f1[1]](_0x53f1[11])[_0x53f1[0]])||0;
-        const _0x22a0x17=parseFloat(document[_0x53f1[1]](_0x53f1[12])[_0x53f1[0]])||0;
-        const _0x22a0x18=parseFloat(document[_0x53f1[1]](_0x53f1[13])[_0x53f1[0]])||0;
+    function hesapla() {
+        saveInputs();
+
+        const emekli = document.getElementById("emekliSwitch").checked;
+        const saatUcreti = parseFloat(document.getElementById("saatUcreti").value) || 0;
+        const normalSaat = parseFloat(document.getElementById("normalSaat").value) || 0;
+        const mesai1Saat = parseFloat(document.getElementById("mesai1Saat").value) || 0;
+        const mesai2Saat = parseFloat(document.getElementById("mesai2Saat").value) || 0;
+        const cocukYardimi = parseFloat(document.getElementById("cocukYardimi").value) || 0;
+        const yakacak = parseFloat(document.getElementById("yakacak").value) || 0;
+        const oncekiKumulatif = parseFloat(document.getElementById("oncekiKumulatif").value) || 0;
+        const gvIstisnasi = parseFloat(document.getElementById("gvIstisnasi").value) || 0;
+        const dvIstisnasi = parseFloat(document.getElementById("dvIstisnasi").value) || 0;
+        const digerBrutKazanc = parseFloat(document.getElementById("digerBrutKazanc").value) || 0;
+        const digerKesintiler = parseFloat(document.getElementById("digerKesintiler").value) || 0;
+        const oncedenOdenenDiğer = parseFloat(document.getElementById("oncedenOdenenDiğer").value) || 0;
+
+        if (emekli) {
+            document.getElementById("switchStatusLabel").innerText = "Emekli";
+            document.getElementById("lblSigortaPrimi").innerText = "Emekli SGDP Primi (%7,5):";
+            document.getElementById("lblIssizlikPrimi").innerText = "İşsizlik Primi (%0):";
+        } else {
+            document.getElementById("switchStatusLabel").innerText = "Çalışan";
+            document.getElementById("lblSigortaPrimi").innerText = "Çalışan SGK Primi (%14):";
+            document.getElementById("lblIssizlikPrimi").innerText = "İşsizlik Primi (%1):";
+        }
+
+        const normalTutar = saatUcreti * normalSaat;
+        const ikramiyeTutar = (saatUcreti * 225) / 3;
+        const mesai1Tutar = saatUcreti * mesai1Saat * 2;
+        const mesai2Tutar = saatUcreti * mesai2Saat * 2.2;
         
-        if(_0x22a0xe){
-            document[_0x53f1[1]](_0x53f1[38])[_0x53f1[15]]="\u0045\u006D\u0065\u006B\u006C\u0069";
-            document[_0x53f1[1]](_0x53f1[14])[_0x53f1[15]]="\u0045\u006D\u0065\u006B\u006C\u0069\u0020\u0053\u0047\u0044\u0050\u0020\u0050\u0072\u0069\u006D\u0069\u0020\u0028\u0025\u0037\u002C\u0035\u0029\u003A";
-            document[_0x53f1[1]](_0x53f1[18])[_0x53f1[15]]="\u0130\u015fsizlik Primi (%0):";
-        }else{
-            document[_0x53f1[1]](_0x53f1[38])[_0x53f1[15]]="\u00C7\u0061\u006C\u0131\u015F\u0061\u006E";
-            document[_0x53f1[1]](_0x53f1[14])[_0x53f1[15]]="\u00C7\u0061\u006C\u0131\u015F\u0061\u006E\u0020\u0053\u0047\u004B\u0020\u0050\u0072\u0069\u006D\u0069\u0020\u0028\u0025\u0031\u0034\u0029\u003A";
-            document[_0x53f1[1]](_0x53f1[18])[_0x53f1[15]]="\u0130\u015fsizlik Primi (%1):";
-        };
+        // Brüt Toplam (Diğer Brüt Kazançlar eklendi)
+        const brutToplam = normalTutar + ikramiyeTutar + mesai1Tutar + mesai2Tutar + cocukYardimi + yakacak + digerBrutKazanc;
+        
+        // SGK Matrahı (Çocuk Yardımı SGK Muafiyetine tabi tutularak düşülür)
+        const sgkMatrahi = brutToplam - cocukYardimi;
+        
+        const sgkOrani = emekli ? 0.075 : 0.14;
+        const issizlikOrani = emekli ? 0.0 : 0.01;
+        
+        const sigortaPrimi = sgkMatrahi * sgkOrani;
+        const issizlikPrimi = sgkMatrahi * issizlikOrani;
+        const sendikaAidati = saatUcreti * 7.5;
+        
+        const vergiMatrahi = sgkMatrahi - sigortaPrimi - issizlikPrimi - sendikaAidati;
+        const yeniKumulatif = oncekiKumulatif + vergiMatrahi;
+        
+        const hesaplananGV = gelirVergisiHesapla(vergiMatrahi, oncekiKumulatif);
+        const netGV = Math.max(0, hesaplananGV - gvIstisnasi);
+        
+        const hesaplananDV = brutToplam * 0.00759;
+        const netDV = Math.max(0, hesaplananDV - dvIstisnasi);
+        
+        // Yasal Kesintiler Toplamı
+        const yasalKesintiler = sigortaPrimi + issizlikPrimi + sendikaAidati + netGV + netDV;
+        
+        // Toplam Kesinti (Özel Kesintiler + Maaş Öncesi Ödenen / Diğer dahil)
+        const toplamKesinti = yasalKesintiler + digerKesintiler + oncedenOdenenDiğer;
+        
+        const netKazanc = brutToplam - toplamKesinti;
 
-        const _0x22a0x19=_0x22a0xf*_0x22a0x10;
-        const _0x22a0x1a=(_0x22a0xf*225)/3;
-        const _0x22a0x1b=_0x22a0xf*_0x22a0x11*2;
-        const _0x22a0x1c=_0x22a0xf*_0x22a0x12*2.2;
-        const _0x22a0x1d=_0x22a0x19+_0x22a0x1a+_0x22a0x1b+_0x22a0x1c+_0x22a0x13+_0x22a0x14;
-        const _0x22a0x1e=_0x22a0x1d-_0x22a0x13;
-        const _0x22a0x1f=_0x22a0xe?0.075:0.14;
-        const _0x22a0x20=_0x22a0xe?0:0.01;
-        const _0x22a0x21=_0x22a0x1e*_0x22a0x1f;
-        const _0x22a0x22=_0x22a0x1e*_0x22a0x20;
-        const _0x22a0x23=_0x22a0xf*7.5;
-        const _0x22a0x24=_0x22a0x1e-_0x22a0x21-_0x22a0x22-_0x22a0x23;
-        const _0x22a0x25=_0x22a0x15+_0x22a0x24;
-        const _0x22a0x26=gelirVergisiHesapla(_0x22a0x24,_0x22a0x15);
-        const _0x22a0x27=Math.max(0,_0x22a0x26-_0x22a0x16);
-        const _0x22a0x28=_0x22a0x1d*0.00759;
-        const _0x22a0x29=Math.max(0,_0x22a0x28-_0x22a0x17);
-        const _0x22a0x2a=_0x22a0x21+_0x22a0x22+_0x22a0x23+_0x22a0x27+_0x22a0x29;
-        const _0x22a0x2b=_0x22a0x2a+_0x22a0x18;
-        const _0x22a0x2c=_0x22a0x1d-_0x22a0x2b;
-
-        document[_0x53f1[1]](_0x53f1[23])[_0x53f1[0]]=formatTL(_0x22a0x19);
-        document[_0x53f1[1]](_0x53f1[24])[_0x53f1[0]]=formatTL(_0x22a0x1a);
-        document[_0x53f1[1]](_0x53f1[25])[_0x53f1[0]]=formatTL(_0x22a0x1b);
-        document[_0x53f1[1]](_0x53f1[26])[_0x53f1[0]]=formatTL(_0x22a0x1c);
-        document[_0x53f1[1]](_0x53f1[27])[_0x53f1[0]]=formatTL(_0x22a0x24);
-        document[_0x53f1[1]](_0x53f1[28])[_0x53f1[0]]=formatTL(_0x22a0x21);
-        document[_0x53f1[1]](_0x53f1[29])[_0x53f1[0]]=formatTL(_0x22a0x22);
-        document[_0x53f1[1]](_0x53f1[30])[_0x53f1[0]]=formatTL(_0x22a0x23);
-        document[_0x53f1[1]](_0x53f1[31])[_0x53f1[0]]=formatTL(_0x22a0x27);
-        document[_0x53f1[1]](_0x53f1[32])[_0x53f1[0]]=formatTL(_0x22a0x29);
-        document[_0x53f1[1]](_0x53f1[33])[_0x53f1[15]]=formatTL(_0x22a0x1d);
-        document[_0x53f1[1]](_0x53f1[34])[_0x53f1[15]]=formatTL(_0x22a0x2b);
-        document[_0x53f1[1]](_0x53f1[35])[_0x53f1[15]]=formatTL(_0x22a0x1e);
-        document[_0x53f1[1]](_0x53f1[36])[_0x53f1[15]]=formatTL(_0x22a0x25);
-        document[_0x53f1[1]](_0x53f1[37])[_0x53f1[15]]=formatTL(_0x22a0x2c);
+        document.getElementById("normalTutar").value = formatTL(normalTutar);
+        document.getElementById("ikramiye").value = formatTL(ikramiyeTutar);
+        document.getElementById("mesai1Tutar").value = formatTL(mesai1Tutar);
+        document.getElementById("mesai2Tutar").value = formatTL(mesai2Tutar);
+        document.getElementById("vergiMatrahi").value = formatTL(vergiMatrahi);
+        document.getElementById("sigortaPrimi").value = formatTL(sigortaPrimi);
+        document.getElementById("issizlikPrimi").value = formatTL(issizlikPrimi);
+        document.getElementById("sendikaAidati").value = formatTL(sendikaAidati);
+        document.getElementById("netGV").value = formatTL(netGV);
+        document.getElementById("netDV").value = formatTL(netDV);
+        
+        document.getElementById("kpiBrut").innerText = formatTL(brutToplam);
+        document.getElementById("kpiKesinti").innerText = formatTL(toplamKesinti);
+        document.getElementById("kpiSsk").innerText = formatTL(sgkMatrahi);
+        document.getElementById("kpiKumulatif").innerText = formatTL(yeniKumulatif);
+        document.getElementById("netKazanc").innerText = formatTL(netKazanc);
     }
 
-    window.onload=function(){
+    window.onload = function() {
+        loadInputs();
         hesapla();
         lucide.createIcons();
     };
